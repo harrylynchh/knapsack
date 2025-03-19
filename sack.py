@@ -1,35 +1,61 @@
+from globals import VALUES
 class Sack:
-    contents: set
-    total_weight: int
-    total_importance: int
+    contents: list
+    weight: int
+    imp: int
     
-    def __init__(self, contents: set):
-        self.contents = contents
-        self.total_weight = 0
-        self.total_importance = 0
-        for node in contents:
-            self.total_weight += node.weight
-            self.total_importance += node.importance
+    def __init__(self, contents: list = [], other = None):
+        if isinstance(other, Sack):
+            print("RUNNING")
+            # shallow cpy of the contents to avoid pass by ref
+            self.contents = other.contents[:]
+            self.weight = other.weight
+            self.imp = other.imp
+        else:
+            self.contents = contents
+            self.weight = 0
+            self.imp = 0
+            for i in range(0, len(contents)):
+                if contents[i]:
+                    wt, imp = VALUES[i]
+                    self.weight += wt
+                    self.imp += imp
     
     def __len__(self):
         return len(self.contents)
     
-    def removeItem(self) -> any:
-        node = self.contents.pop()
-        self.total_weight -= node.weight
-        self.total_importance -= node.importance
-        return node
+    def removeItem(self, index: int):
+        print(f"CONTENT TYPE: {type(self.contents)}")
+        if self.contents[index]:
+            wt, imp = VALUES[index]
+            self.weight -= wt
+            self.imp -= imp
+
+        self.contents[index] = 0
     
-    def addItem(self, item):
+    def addItem(self, index: int):
         # Prevent duplicates
-        if any(isinstance(x, type(item)) for x in self.contents):
-            return
-        self.contents.append(item)
-        self.total_weight += item.weight
-        self.total_importance += item.importance
+        wt, imp = VALUES[index]
         
-    def __hash__(self):
-        return hash(frozenset(self.contents))
+        if self.contents[index] or (self.weight + wt) > 250:
+            return
+        
+        self.contents[index] = 1
+        
+        self.weight += wt
+        self.imp += imp
+
+    def flip(self, index: int):
+        if self.contents[index]:
+            self.removeItem(index)
+        else:
+            self.addItem(index)
     
     def __eq__(self, other):
         return isinstance(other, Sack) and other.contents == self.contents
+    
+    def __lt__(self, other):
+        if type(self) != type(other):
+            print(f"ERROR: TRYING TO COMPARE PancakeStack to {type(other)}")
+            return False
+        return self.imp > self.imp
