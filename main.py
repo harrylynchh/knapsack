@@ -25,7 +25,7 @@ population = PriorityQueue()
 seen = set()
 
 print(f"Generating a population of {size} random knapsacks...")
-# Create 
+# Create the initial population full of random individuals
 for i in range(0, size):
     new = Sack(contents=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
     initItems = random.randint(1, 12)

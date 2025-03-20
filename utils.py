@@ -1,3 +1,10 @@
+'''
+utils.py
+Harry Lynch
+3/20/2025
+Most of the heavy lifting for running generations of the Genetic Algorithm in 
+tandem with the PriorityQueue and Sack classes.
+'''
 from priority import PriorityQueue
 from sack import Sack
 
@@ -13,6 +20,12 @@ def promptUser(prompt: str, options: tuple) -> str:
           print(f"Unexpected input, please specify one of these options: {options}")
     return choice
 
+'''
+runGeneration
+Runs a single generation of the GA, beginning by culling 50% of the population
+then all surviving individuals create 12 offspring each, with each offspring
+undergoing a single-mutation of a different gene.  Then print generation info
+'''
 def runGeneration(pop: PriorityQueue, seen: set) -> tuple[PriorityQueue, set]:
     top10, killed = pop.cull()
     
@@ -49,12 +62,18 @@ def runGeneration(pop: PriorityQueue, seen: set) -> tuple[PriorityQueue, set]:
     print(f"Added {ctr} individuals")
     return (pop, seen)
 
+'''
+printResults
+Helper to print 5 indiviudals from the final generaton at a time by user input
+'''
 def printResults(pop: PriorityQueue): 
     population = sorted(pop.queue)  
-    # Print the top 5
+    # Print the top 5 first before prompting
     i = 0
     i = printFive(i, population)
     
+    # Loopily use printFive to print the next 5 individuals until user quits
+    # or there are no more individuals
     c = ""
     while c == "":
         c = input("Press enter to 5 more individuals. (Type anything to exit)")
@@ -65,6 +84,10 @@ def printResults(pop: PriorityQueue):
             print("\n No more individuals to print. \n")
             c = "BREAK LOOP"
 
+'''
+printFive
+Prints five individuals from i to i+5 and all of their information
+'''
 def printFive(i: int, pop: list) -> int:
     for i in range (i, i+5):
         # Don't go out of bounds
