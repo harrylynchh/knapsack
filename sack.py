@@ -1,4 +1,15 @@
-from globals import VALUES
+'''
+sack.py
+Harry Lynch
+3/19/2025
+Implementation of the Sack class- representative of a single individual in the
+population.  Really is an object containing a genome (the presence of items in that Sack)
+and a weight/importance that is calculated as items are added or removed.
+NOTE: Is set hashable and compatible with heapq (__lt__, __hash__, __eq__ implemented)
+'''
+# Data 
+VALUES = [(20, 6), (30, 5), (60, 8), (90, 7), (50, 6), (70, 9), (30, 4), (30, 5) \
+         , (70, 4), (20, 9), (20, 2), (60, 1)]
 class Sack:
     contents: list
     weight: int
@@ -6,7 +17,6 @@ class Sack:
     
     def __init__(self, contents: list = [], other = None):
         if isinstance(other, Sack):
-            print("RUNNING")
             # shallow cpy of the contents to avoid pass by ref
             self.contents = other.contents[:]
             self.weight = other.weight
@@ -25,7 +35,6 @@ class Sack:
         return len(self.contents)
     
     def removeItem(self, index: int):
-        print(f"CONTENT TYPE: {type(self.contents)}")
         if self.contents[index]:
             wt, imp = VALUES[index]
             self.weight -= wt
@@ -50,6 +59,9 @@ class Sack:
             self.removeItem(index)
         else:
             self.addItem(index)
+            
+    def __hash__(self):
+        return hash(tuple(self.contents))
     
     def __eq__(self, other):
         return isinstance(other, Sack) and other.contents == self.contents

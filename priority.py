@@ -39,20 +39,19 @@ class PriorityQueue:
         # where n is 0.5*population_size
         n = int(len(self.queue) / 2)
         if n >= len(self.queue):
-            print("ERROR: ATTEMPTING TO CULL MORE ELEMENTS THAN EXIST IN THE QUEUE")
-            self.queue = []
-            return
+            return (self.queue, [])
 
         print(f"- CULLING {n} INDIVIDUALS")
         
         # Keep only the sacks with the highest importance (second element of tuple)
         survivors = [item[1] for item in heapq.nsmallest(len(self.queue) - n, self.queue)]
-        
+        killed = [item[1] for item in heapq.nlargest(n, self.queue)]  # Worst n individuals
+
         # Rebuild the heap with the best sacks
-        self.queue = [(item.imp, item) for item in survivors]  # rebuild heap with (priority, sack)
+        self.queue = [(-item.imp, item) for item in survivors]  # rebuild heap with (priority, sack)
         heapq.heapify(self.queue)
         
-        return survivors
+        return (survivors, killed)
 
 
     def peek(self) -> Sack:
